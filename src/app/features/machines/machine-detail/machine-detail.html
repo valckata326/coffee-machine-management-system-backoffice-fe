@@ -1,0 +1,50 @@
+<a routerLink="/machines" class="back-link">← Machines</a>
+
+@if (!context.companyId()) {
+  <app-company-required />
+}
+
+@if (error()) {
+  <p class="alert alert-error">{{ error() }}</p>
+}
+
+@if (machine(); as m) {
+  <div class="page-header">
+    <h1>Machine {{ m.serialNumber }}</h1>
+    <div class="actions">
+      <a routerLink="edit" class="btn btn-secondary">Edit</a>
+      <button type="button" class="btn btn-danger" (click)="remove(m)">Remove</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <dl class="details">
+      <dt>Id</dt>
+      <dd>{{ m.id }}</dd>
+      <dt>Company</dt>
+      <dd>{{ m.companyName }} (#{{ m.companyId }})</dd>
+      <dt>Serial number</dt>
+      <dd>{{ m.serialNumber }}</dd>
+      <dt>Model</dt>
+      <dd>{{ m.model || '—' }}</dd>
+      <dt>Location id</dt>
+      <dd>{{ m.locationId }}</dd>
+      <dt>City</dt>
+      <dd>{{ m.city || '—' }}</dd>
+      <dt>Address</dt>
+      <dd>{{ m.addressLine || '—' }}</dd>
+      <dt>Coordinates</dt>
+      <dd>
+        @if (m.coordinateX != null && m.coordinateY != null) {
+          {{ m.coordinateX }}, {{ m.coordinateY }}
+        } @else {
+          —
+        }
+      </dd>
+      <dt>Status</dt>
+      <dd>
+        <span class="badge" [class.badge-muted]="!m.active">{{ m.active ? 'Active' : 'Removed' }}</span>
+      </dd>
+    </dl>
+  </div>
+}

@@ -1,0 +1,119 @@
+<h1>Refill visits</h1>
+
+@if (context.companyId()) {
+  <div class="tabs">
+    <button type="button" [class.active]="mode() === 'create'" (click)="setMode('create')">
+      New visit
+    </button>
+    <button type="button" [class.active]="mode() === 'update'" (click)="setMode('update')">
+      Update visit
+    </button>
+  </div>
+
+  <form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+    @if (error()) {
+      <p class="alert alert-error">{{ error() }}</p>
+    }
+
+    <div class="grid-2">
+      <label class="field">
+        Machine id
+        <input type="number" min="1" formControlName="machineId" />
+        @if (form.controls.machineId.touched && form.controls.machineId.invalid) {
+          <span class="field-error">Machine id is required</span>
+        }
+      </label>
+
+      @if (mode() === 'update') {
+        <label class="field">
+          Visit id
+          <input type="number" min="1" formControlName="consumableLoadId" />
+          @if (form.controls.consumableLoadId.touched && form.controls.consumableLoadId.invalid) {
+            <span class="field-error">Visit id is required</span>
+          }
+        </label>
+      }
+    </div>
+
+    <label class="field">
+      Total cost
+      @if (mode() === 'update') {
+        <span class="muted">(optional)</span>
+      }
+      <input type="number" min="0" step="0.01" formControlName="totalCost" />
+      @if (form.controls.totalCost.touched && form.controls.totalCost.invalid) {
+        <span class="field-error">Total cost is required and must not be negative</span>
+      }
+    </label>
+
+    <fieldset class="items" formArrayName="items">
+      <legend>
+        Consumables
+        @if (mode() === 'update') {
+          <span class="muted">(added, or quantity replaced if already in the visit)</span>
+        }
+      </legend>
+
+      @for (item of items.controls; track item; let i = $index) {
+        <div class="item-row" [formGroupName]="i">
+          <label class="field">
+            Consumable id
+            <input type="number" min="1" formControlName="consumableId" />
+          </label>
+          <label class="field">
+            Quantity
+            <input type="number" min="0.001" step="0.001" formControlName="quantity" />
+          </label>
+          <button type="button" class="btn btn-small btn-light" (click)="removeItem(i)">Remove</button>
+        </div>
+        @if (item.touched && item.invalid) {
+          <span class="field-error">Consumable id and a positive quantity are required</span>
+        }
+      } @empty {
+        <p class="muted">No consumables.</p>
+      }
+
+      @if (items.hasError('duplicateConsumable')) {
+        <span class="field-error">Each consumable may appear only once per visit.</span>
+      }
+
+      <button type="button" class="btn btn-small btn-secondary" (click)="addItem()">+ Add consumable</button>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="btn" [disabled]="saving()">
+        {{ mode() === 'create' ? 'Log visit' : 'Update visit' }}
+      </button>
+    </div>
+  </form>
+
+  @if (saved(); as load) {
+    <div class="card">
+      <div class="page-header">
+        <h2>Visit #{{ load.id }} saved</h2>
+        <button type="button" class="btn btn-small btn-secondary" (click)="editSaved(load)">
+          Edit this visit
+        </button>
+      </div>
+      <p class="muted">
+        Machine #{{ load.machineId }} · {{ load.loadedAt | date: 'medium' }} · Total cost
+        {{ load.totalCost | number: '1.2-2' }}
+      </p>
+      <table class="table">
+        <thead>
+          <tr><th>Consumable</th><th>Quantity</th></tr>
+        </thead>
+        <tbody>
+          @for (item of load.items; track item.id) {
+            <tr>
+              <td>{{ item.consumableName }} (#{{ item.consumableId }})</td>
+              <td>{{ item.quantity }} {{ item.unitAbbreviation }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+} @else {
+  <app-company-required />
+}

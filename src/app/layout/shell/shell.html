@@ -1,0 +1,40 @@
+<header class="topbar">
+  <a routerLink="/" class="brand">☕ CoffeeOps <span class="brand-sub">Backoffice</span></a>
+
+  <div class="topbar-right">
+    <label class="company-picker">
+      Company #
+      @if (company.canSwitch()) {
+        <input
+          type="number"
+          min="1"
+          placeholder="id"
+          [value]="company.companyId() ?? ''"
+          (change)="onCompanyChange($any($event.target).value)"
+        />
+      } @else {
+        <strong>{{ company.companyId() }}</strong>
+      }
+    </label>
+
+    @if (auth.session(); as session) {
+      <span class="user">
+        {{ session.username }} <span class="badge">{{ session.role }}</span>
+      </span>
+    }
+    <button type="button" class="btn btn-light" (click)="auth.logout()">Log out</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+    @for (item of navItems(); track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+    }
+  </nav>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>
