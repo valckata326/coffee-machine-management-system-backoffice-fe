@@ -1,0 +1,40 @@
+<a routerLink="/machines" class="back-link">← Machines</a>
+<h1>{{ isEdit() ? 'Edit machine' : 'New machine' }}</h1>
+
+@if (context.companyId()) {
+  <form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+    @if (error()) {
+      <p class="alert alert-error">{{ error() }}</p>
+    }
+
+    <label class="field">
+      Serial number
+      <input formControlName="serialNumber" maxlength="100" />
+      @if (form.controls.serialNumber.touched && form.controls.serialNumber.invalid) {
+        <span class="field-error">Serial number is required (max 100 characters)</span>
+      }
+    </label>
+
+    <label class="field">
+      Model <span class="muted">(optional)</span>
+      <input formControlName="model" maxlength="100" />
+    </label>
+
+    <label class="field">
+      Location id
+      <input type="number" min="1" formControlName="locationId" />
+      @if (form.controls.locationId.touched && form.controls.locationId.invalid) {
+        <span class="field-error">Location id is required</span>
+      }
+    </label>
+
+    <div class="actions">
+      <button type="submit" class="btn" [disabled]="saving()">
+        {{ isEdit() ? 'Save changes' : 'Create machine' }}
+      </button>
+      <a routerLink="/machines" class="btn btn-light">Cancel</a>
+    </div>
+  </form>
+} @else {
+  <app-company-required />
+}

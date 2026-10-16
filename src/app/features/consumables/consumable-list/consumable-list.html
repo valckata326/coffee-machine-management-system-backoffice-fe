@@ -1,0 +1,42 @@
+<div class="page-header">
+  <h1>Consumables</h1>
+  <a routerLink="new" class="btn">+ New consumable</a>
+</div>
+
+@if (error()) {
+  <p class="alert alert-error">{{ error() }}</p>
+}
+
+<div class="card">
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (consumables().length === 0) {
+    <p class="muted">The catalog is empty.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Unit</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (consumable of consumables(); track consumable.id) {
+          <tr>
+            <td>{{ consumable.id }}</td>
+            <td>{{ consumable.name }}</td>
+            <td>{{ consumable.unitTypeName }} ({{ consumable.unitAbbreviation }})</td>
+            <td class="col-actions">
+              <a [routerLink]="[consumable.id, 'edit']" class="btn btn-small btn-light">Edit</a>
+              <button type="button" class="btn btn-small btn-danger" (click)="remove(consumable)">
+                Remove
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

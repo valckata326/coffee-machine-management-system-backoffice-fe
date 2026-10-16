@@ -1,0 +1,36 @@
+<h1>Companies</h1>
+
+<form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+  <h2>Register a company</h2>
+
+  @if (error()) {
+    <p class="alert alert-error">{{ error() }}</p>
+  }
+
+  <label class="field">
+    Name
+    <input formControlName="name" maxlength="255" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <span class="field-error">Name is required (max 255 characters)</span>
+    }
+  </label>
+
+  <div class="actions">
+    <button type="submit" class="btn" [disabled]="saving()">Register</button>
+  </div>
+</form>
+
+@if (created(); as company) {
+  <div class="card">
+    <p class="alert alert-success">
+      Company <strong>{{ company.name }}</strong> registered with id <strong>{{ company.id }}</strong>.
+    </p>
+    @if (context.companyId() !== company.id) {
+      <button type="button" class="btn btn-secondary" (click)="context.select(company.id)">
+        Work in this company
+      </button>
+    } @else {
+      <p class="muted">This is now your active company.</p>
+    }
+  </div>
+}

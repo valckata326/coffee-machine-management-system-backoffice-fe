@@ -1,0 +1,32 @@
+<a routerLink="/consumables" class="back-link">← Consumables</a>
+<h1>{{ isEdit() ? 'Edit consumable' : 'New consumable' }}</h1>
+
+<form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+  @if (error()) {
+    <p class="alert alert-error">{{ error() }}</p>
+  }
+
+  <label class="field">
+    Name
+    <input formControlName="name" maxlength="100" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <span class="field-error">Name is required (max 100 characters)</span>
+    }
+  </label>
+
+  <label class="field">
+    Unit type id
+    <input type="number" min="1" formControlName="unitTypeId" />
+    <span class="hint">Unit types (kg, l, pcs…) are managed in the database.</span>
+    @if (form.controls.unitTypeId.touched && form.controls.unitTypeId.invalid) {
+      <span class="field-error">Unit type id is required</span>
+    }
+  </label>
+
+  <div class="actions">
+    <button type="submit" class="btn" [disabled]="saving()">
+      {{ isEdit() ? 'Save changes' : 'Create consumable' }}
+    </button>
+    <a routerLink="/consumables" class="btn btn-light">Cancel</a>
+  </div>
+</form>

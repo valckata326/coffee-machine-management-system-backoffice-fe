@@ -1,0 +1,27 @@
+<form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+  <h2>Create user</h2>
+
+  @if (error()) {
+    <p class="alert alert-error">{{ error() }}</p>
+  }
+
+  <label class="field">
+    Name
+    <input formControlName="name" maxlength="255" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <span class="field-error">Name is required (max 255 characters)</span>
+    }
+  </label>
+
+  <label class="field">
+    Role id
+    <input type="number" min="1" formControlName="roleId" />
+    @if (form.controls.roleId.touched && form.controls.roleId.invalid) {
+      <span class="field-error">Role id is required</span>
+    }
+  </label>
+
+  <div class="actions">
+    <button type="submit" class="btn" [disabled]="saving()">Create</button>
+  </div>
+</form>

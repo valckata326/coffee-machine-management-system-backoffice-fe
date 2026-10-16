@@ -1,0 +1,60 @@
+<div class="page-header">
+  <h1>Machines</h1>
+  @if (context.companyId()) {
+    <a routerLink="new" class="btn">+ New machine</a>
+  }
+</div>
+
+@if (context.companyId()) {
+  <form class="toolbar" (ngSubmit)="load()">
+    <input placeholder="Filter by city" [formControl]="city" />
+    <button type="submit" class="btn btn-secondary">Filter</button>
+    @if (city.value) {
+      <button type="button" class="btn btn-light" (click)="clearFilter()">Clear</button>
+    }
+  </form>
+
+  @if (error()) {
+    <p class="alert alert-error">{{ error() }}</p>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <p class="muted">Loading…</p>
+    } @else if (machines().length === 0) {
+      <p class="muted">No machines found.</p>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Serial number</th>
+            <th>Model</th>
+            <th>City</th>
+            <th>Address</th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (machine of machines(); track machine.id) {
+            <tr>
+              <td>{{ machine.id }}</td>
+              <td><a [routerLink]="[machine.id]">{{ machine.serialNumber }}</a></td>
+              <td>{{ machine.model || '—' }}</td>
+              <td>{{ machine.city || '—' }}</td>
+              <td>{{ machine.addressLine || '—' }}</td>
+              <td class="col-actions">
+                <a [routerLink]="[machine.id, 'edit']" class="btn btn-small btn-light">Edit</a>
+                <button type="button" class="btn btn-small btn-danger" (click)="remove(machine)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+} @else {
+  <app-company-required />
+}
